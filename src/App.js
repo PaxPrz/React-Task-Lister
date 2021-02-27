@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import NewTask from './Presentational/NewTask';
+import TasksList from './Presentational/TasksList';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+export default function TaskManager(){
+    const [tasks, setTasks] = useState([]);
+    const [newTask, setNewTask] = useState({});
+
+    const handleChange = ({target}) => {
+        const {name, value} = target;
+        setNewTask((prev) => ({
+            ...prev,
+            [name]: value,
+            id: Date.now()
+        }));
+        // console.log(newTask);
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (!newTask) return;
+        setTasks((prev) => [...prev, newTask]);
+        setNewTask({});
+    }
+
+    const handleDelete = (taskIdToRemove) => {
+        // console.log(taskIdToRemove);
+        setTasks((prev) => prev.filter((task) => task.id !== taskIdToRemove));
+    }
+
+    return (
+        <main>
+            <h1>Tasks</h1>
+            <NewTask 
+                task={newTask}
+                onChange={handleChange}
+                onSubmit={handleSubmit}
+            />
+            <TasksList 
+                tasks={tasks}
+                onDelete={handleDelete}
+            />
+        </main>
+    )
 }
-
-export default App;
